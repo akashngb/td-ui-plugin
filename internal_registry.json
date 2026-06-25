@@ -1,0 +1,70 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "items": [
+    {
+      "name": "animated-list",
+      "type": "registry:ui",
+      "author": "21stdev",
+      "description": "Cycling list that fades between child items using framer-motion. Useful for notification stacks or rotating testimonials.",
+      "dependencies": ["framer-motion"],
+      "devDependencies": [],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "ui/animated-list.tsx",
+          "content": "\"use client\";\nimport * as React from \"react\";\nimport { motion, AnimatePresence } from \"framer-motion\";\n\nexport interface AnimatedListProps {\n  items: React.ReactNode[];\n  delay?: number;\n  className?: string;\n}\n\nexport function AnimatedList({ items, delay = 1500, className }: AnimatedListProps) {\n  const [index, setIndex] = React.useState(0);\n\n  React.useEffect(() => {\n    if (items.length === 0) return;\n    const id = setInterval(() => {\n      setIndex((i) => (i + 1) % items.length);\n    }, delay);\n    return () => clearInterval(id);\n  }, [items.length, delay]);\n\n  if (items.length === 0) return null;\n\n  return (\n    <div className={className}>\n      <AnimatePresence mode=\"popLayout\">\n        <motion.div\n          key={index}\n          initial={{ opacity: 0, y: -10 }}\n          animate={{ opacity: 1, y: 0 }}\n          exit={{ opacity: 0, y: 10 }}\n          transition={{ duration: 0.3 }}\n        >\n          {items[index]}\n        </motion.div>\n      </AnimatePresence>\n    </div>\n  );\n}\n",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "shiny-gradient-button",
+      "type": "registry:ui",
+      "author": "aceternity",
+      "description": "Button with a shimmering animated linear-gradient background. Requires the shiny-gradient tailwind animation defined in the bundled config.",
+      "dependencies": ["clsx", "tailwind-merge"],
+      "devDependencies": [],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "ui/shiny-gradient-button.tsx",
+          "content": "\"use client\";\nimport * as React from \"react\";\nimport { cn } from \"@/lib/utils\";\n\nexport interface ShinyGradientButtonProps\n  extends React.ButtonHTMLAttributes<HTMLButtonElement> {}\n\nexport const ShinyGradientButton = React.forwardRef<\n  HTMLButtonElement,\n  ShinyGradientButtonProps\n>(({ className, children, ...props }, ref) => {\n  return (\n    <button\n      ref={ref}\n      className={cn(\n        \"relative inline-flex h-12 items-center justify-center overflow-hidden rounded-md px-6 font-medium text-white\",\n        \"bg-[linear-gradient(110deg,#1f2937,45%,#4b5563,55%,#1f2937)] bg-[length:200%_100%]\",\n        \"animate-shiny-gradient transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50\",\n        className,\n      )}\n      {...props}\n    >\n      {children}\n    </button>\n  );\n});\nShinyGradientButton.displayName = \"ShinyGradientButton\";\n",
+          "type": "registry:ui"
+        }
+      ],
+      "tailwind": {
+        "config": {
+          "theme": {
+            "extend": {
+              "animation": {
+                "shiny-gradient": "shiny-gradient 5s linear infinite"
+              },
+              "keyframes": {
+                "shiny-gradient": {
+                  "0%, 100%": { "background-position": "0% 50%" },
+                  "50%": { "background-position": "100% 50%" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "glow-card",
+      "type": "registry:ui",
+      "author": "heroui",
+      "description": "Translucent card with a soft, configurable color glow shadow. Accepts an optional glowColor prop (any CSS color string).",
+      "dependencies": ["clsx", "tailwind-merge"],
+      "devDependencies": [],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "ui/glow-card.tsx",
+          "content": "\"use client\";\nimport * as React from \"react\";\nimport { cn } from \"@/lib/utils\";\n\nexport interface GlowCardProps extends React.HTMLAttributes<HTMLDivElement> {\n  glowColor?: string;\n}\n\nexport const GlowCard = React.forwardRef<HTMLDivElement, GlowCardProps>(\n  ({ className, children, glowColor = \"rgba(99,102,241,0.5)\", style, ...props }, ref) => {\n    const mergedStyle: React.CSSProperties = {\n      boxShadow: `0 0 40px -12px ${glowColor}`,\n      ...style,\n    };\n    return (\n      <div\n        ref={ref}\n        style={mergedStyle}\n        className={cn(\n          \"relative rounded-xl border border-white/10 bg-zinc-900/60 p-6 backdrop-blur transition-shadow\",\n          className,\n        )}\n        {...props}\n      >\n        {children}\n      </div>\n    );\n  },\n);\nGlowCard.displayName = \"GlowCard\";\n",
+          "type": "registry:ui"
+        }
+      ]
+    }
+  ]
+}
